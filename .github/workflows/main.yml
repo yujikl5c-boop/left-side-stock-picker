@@ -28,11 +28,11 @@ stocks = [
     ('000001', '平安银行'),
     ('600036', '招商银行'),
     ('000858', '五粮液'),
-
+    ('002415', '海康威视')
 ]
 df = pd.DataFrame(stocks, columns=['code', 'name'])
 df.to_excel('stock_list.xlsx', index=False)
-print('Stock list generated with', len(df), 'stocks')
+print('OK')
 "
       
       - name: Run candidate selection
@@ -43,5 +43,5 @@ print('Stock list generated with', len(df), 'stocks')
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add left_daily_candidates.json left_dashboard.html left_history.json 2>/dev/null || true
-          git diff --cached --quiet || git commit -m "Auto update $(date '+%Y-%m-%d %H:%M')"
+          git diff --cached --quiet || git commit -m "Auto update"
           git push
