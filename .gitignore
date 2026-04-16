@@ -1,0 +1,31 @@
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# 虚拟环境
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# IDE 配置
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 自动生成的数据文件（每次运行会产生，不需要上传）
+left_daily_candidates.json
+left_history.json
+left_dashboard.html
+
+# 日志文件
+*.log
+
+# OS 生成的文件
+.DS_Store
+Thumbs.db
