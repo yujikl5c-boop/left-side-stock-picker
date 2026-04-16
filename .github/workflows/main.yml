@@ -2,9 +2,14 @@ name: Left Side Stock Picker
 
 on:
   schedule:
-    - cron: '30 6 * * *'   # 北京时间 14:30
+    - cron: '25 6 * * *'   # 北京时间 14:25
     - cron: '10 7 * * *'   # 北京时间 15:10
-  workflow_dispatch:        # 允许手动触发
+  workflow_dispatch:
+    inputs:
+      run_mode:
+        description: '运行模式 (candidates / history / auto)'
+        required: false
+        default: 'auto'
 
 permissions:
   contents: write
@@ -26,10 +31,14 @@ jobs:
       - name: 3. 安装依赖
         run: pip install -r requirements.txt
 
-      - name: 4. 运行选股程序
-        run: python main.py candidates
-        # 如果你希望支持传入模式（如 history），可以改成 python main.py ${{ github.event.inputs.run_mode || 'candidates' }}
-        # 但这里先固定为 candidates
+      - name: 4. 运行主程序（支持外界传入模式）
+        run: |
+          MODE="${{ github.event.inputs.run_mode }}"
+          if [ -z "$MODE" ]; then
+            MODE="auto"
+          fi
+          echo "🚀 接收到指令，运行模式: $MODE"
+          python -u main.py $MODE
 
       - name: 5. 提交结果到仓库
         run: |
@@ -37,7 +46,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git status
-          git commit -m "Auto update $(date '+%Y-%m-%d %H:%M')" || echo "No changes to commit"
+          git commit -m "Auto update $(date '+%Y-%m-%d %H:%M')" || echo "No changes"
           git push
 
       - name: 6. 准备部署网页
@@ -46,7 +55,7 @@ jobs:
       - name: 7. 打包网页文件
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'   # 将整个仓库根目录作为网页内容
+          path: '.'
 
       - name: 8. 发布到 GitHub Pages
         id: deployment
