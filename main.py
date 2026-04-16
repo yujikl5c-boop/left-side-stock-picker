@@ -13,7 +13,7 @@ from mootdx.quotes import Quotes
 import warnings
 warnings.filterwarnings('ignore')
 
-# 伪装配置（避免连接失败）
+# 伪装配置
 _mootdx_dir = os.path.join(str(Path.home()), '.mootdx')
 _config_file = os.path.join(_mootdx_dir, 'config.json')
 if not os.path.exists(_config_file):
@@ -24,7 +24,7 @@ if not os.path.exists(_config_file):
 
 socket.setdefaulttimeout(10)
 
-# ========== 策略参数（不懂不要改） ==========
+# ========== 策略参数 ==========
 P1 = 8.0
 P2 = 9.0
 BIAS_THRESH = 6.0
@@ -87,13 +87,28 @@ def analyze_left_buy(stock_info, client):
         buy_signal = cond1 and cond2
         if not buy_signal:
             return None
+
+        # 获取每股收益 EPS
+        eps = 0.0
+        try:
+            fin_df = client.finance(symbol=symbol)
+            if fin_df is not None and not fin_df.empty:
+                if 'jinglirun' in fin_df.columns and 'zongguben' in fin_df.columns:
+                    jinglirun = float(fin_df['jinglirun'].iloc[0])
+                    zongguben = float(fin_df['zongguben'].iloc[0])
+                    if zongguben > 0:
+                        eps = round((jinglirun / 10) / zongguben, 3)
+        except Exception:
+            pass
+
         return {
             'code': symbol,
             'name': stock_info['name'],
             'price': float(curr['收盘']),
             'low': float(curr['最低']),
             'bias_val': float(curr['BIAS_VAL']),
-            'date': datetime.now().strftime('%Y-%m-%d')
+            'date': datetime.now().strftime('%Y-%m-%d'),
+            'eps': eps
         }
     except Exception:
         return None
@@ -165,6 +180,7 @@ def generate_dashboard(today_date, now_time):
         daily = {'left': []}
     history = load_history(LEFT_HISTORY_FILE)
     history_sorted = sorted(history, key=lambda x: x['buy_date'], reverse=True)
+
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"><title>左侧抄底看板</title>
@@ -175,14 +191,14 @@ def generate_dashboard(today_date, now_time):
 <h2>左侧抄底系统 <small>{now_time}</small></h2>
 <div class="alert alert-info">参数: 下轨{P2}%, 上轨{P1}%, 乖离率&lt;-{BIAS_THRESH}%</div>
 <div class="card mb-4"><div class="card-header bg-primary text-white">今日抄底候选</div>
-<div class="card-body"><table class="table"><thead><tr><th>代码</th><th>名称</th><th>最新价</th><th>乖离率%</th><th>当日最低价</th></tr></thead><tbody>"""
+<div class="card-body"><table class="table"><thead><tr><th>代码</th><th>名称</th><th>最新价</th><th>乖离率%</th><th>当日最低价</th><th>每股收益</th></tr></thead><tbody>"""
     for s in daily.get('left', []):
-        html += f"<tr><td>{s['code']}</td><td>{s['name']}</td><td>{s['price']:.2f}</td><td>{s['bias_val']:.2f}</td><td>{s['low']:.2f}</td></tr>"
+        html += f"<tr><td>{s['code']}</td><td>{s['name']}</td><td>{s['price']:.2f}</td><td>{s['bias_val']:.2f}</td><td>{s['low']:.2f}</td><td>{s.get('eps', 0.0):.3f}</td></tr>"
     if not daily.get('left'):
-        html += "<tr><td colspan='5'>暂无抄底信号</tr>"
+        html += "<tr><td colspan='6'>暂无抄底信号</td></tr>"
     html += """</tbody></table></div></div>
 <div class="card"><div class="card-header bg-secondary text-white">历史追溯池</div>
-<div class="card-body"><table class="table"><thead><tr><th>买入日期</th><th>代码</th><th>名称</th><th>买入价</th><th>生命线</th><th>最新价</th><th>涨跌%</th><th>状态</th><th>卖出原因</th></tr></thead><tbody>"""
+<div class="card-body"><table class="table"><thead><tr><th>买入日期</th><th>代码</th><th>名称</th><th>买入价</th><th>生命线</th><th>最新价</th><th>涨跌%</th><th>每股收益</th><th>状态</th><th>卖出原因</th></tr></thead><tbody>"""
     for rec in history_sorted:
         buy_price = rec['buy_price']
         latest_price = rec.get('latest_price', buy_price)
@@ -194,7 +210,7 @@ def generate_dashboard(today_date, now_time):
         else:
             status = "持有中"
             reason = "-"
-        html += f"<tr><td>{rec['buy_date']}</td><td>{rec['code']}</td><td>{rec['name']}</td><td>{buy_price:.2f}</td><td>{rec.get('buy_day_low', buy_price):.2f}</td><td>{latest_price:.2f}</td><td class='{color}'>{pct:+.2f}%</td><td>{status}</td><td>{reason}</td></tr>"
+        html += f"<tr><td>{rec['buy_date']}</td><td>{rec['code']}</td><td>{rec['name']}</td><td>{buy_price:.2f}</td><td>{rec.get('buy_day_low', buy_price):.2f}</td><td>{latest_price:.2f}</td><td class='{color}'>{pct:+.2f}%</td><td>{rec.get('eps', 0.0):.3f}</td><td>{status}</td><td>{reason}</td></tr>"
     html += "</tbody></table></div></div></body></html>"
     with open(HTML_OUTPUT, 'w', encoding='utf-8') as f:
         f.write(html)
@@ -208,6 +224,7 @@ if __name__ == '__main__':
     if mode == 'auto':
         mode = 'history' if beijing_now.hour >= 15 else 'candidates'
     print(f"运行模式: {mode}")
+
     # 连接服务器
     tdx_servers = [('124.71.187.122', 7709), ('115.238.90.165', 7709)]
     client = None
@@ -222,11 +239,13 @@ if __name__ == '__main__':
     if client is None:
         print("无法连接服务器")
         sys.exit(1)
+
     # 读取股票池
     meta_df = pd.read_excel(EXCEL_LIST, usecols=[0, 1])
     meta_df.columns = ['code', 'name']
     meta_df['code'] = meta_df['code'].astype(str).str.replace(r'\.0$', '', regex=True).str.zfill(6)
     stock_list = meta_df.to_dict('records')
+
     if mode == 'candidates':
         total = len(stock_list)
         print(f"扫描抄底信号... 共 {total} 只股票")
@@ -261,7 +280,8 @@ if __name__ == '__main__':
                         history.append({
                             'code': c['code'], 'name': c['name'],
                             'buy_price': c['price'], 'buy_date': yest['date'],
-                            'buy_day_low': c['low'], 'latest_price': c['price']
+                            'buy_day_low': c['low'], 'latest_price': c['price'],
+                            'eps': c.get('eps', 0.0)
                         })
                 save_history(history, LEFT_HISTORY_FILE)
         history = load_history(LEFT_HISTORY_FILE)
