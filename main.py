@@ -179,7 +179,7 @@ def generate_dashboard(today_date, now_time):
     for s in daily.get('left', []):
         html += f"<tr><td>{s['code']}</td><td>{s['name']}</td><td>{s['price']:.2f}</td><td>{s['bias_val']:.2f}</td><td>{s['low']:.2f}</td></tr>"
     if not daily.get('left'):
-        html += "<tr><td colspan='5'>暂无抄底信号</td></tr>"
+        html += "<tr><td colspan='5'>暂无抄底信号</tr>"
     html += """</tbody></table></div></div>
 <div class="card"><div class="card-header bg-secondary text-white">历史追溯池</div>
 <div class="card-body"><table class="table"><thead><tr><th>买入日期</th><th>代码</th><th>名称</th><th>买入价</th><th>生命线</th><th>最新价</th><th>涨跌%</th><th>状态</th><th>卖出原因</th></tr></thead><tbody>"""
@@ -228,16 +228,24 @@ if __name__ == '__main__':
     meta_df['code'] = meta_df['code'].astype(str).str.replace(r'\.0$', '', regex=True).str.zfill(6)
     stock_list = meta_df.to_dict('records')
     if mode == 'candidates':
-        print("扫描抄底信号...")
+        total = len(stock_list)
+        print(f"扫描抄底信号... 共 {total} 只股票")
         buy_candidates = []
+        completed = 0
         with ThreadPoolExecutor(max_workers=3) as executor:
             futures = {executor.submit(analyze_left_buy, s, client): s['code'] for s in stock_list}
             for future in as_completed(futures):
+                completed += 1
+                if completed % 100 == 0 or completed == total:
+                    print(f"进度: {completed}/{total}")
+                    sys.stdout.flush()
                 res = future.result()
                 if res:
                     buy_candidates.append(res)
+        print(f"扫描完成！发现 {len(buy_candidates)} 只股票满足条件，正在排序...")
         buy_candidates.sort(key=lambda x: x['bias_val'])
         top5 = buy_candidates[:5]
+        print(f"选出前 {len(top5)} 只作为今日抄底候选")
         with open(DAILY_CANDIDATES_FILE, 'w', encoding='utf-8') as f:
             json.dump({'date': today, 'left': top5}, f, ensure_ascii=False, indent=4)
         print(f"保存{len(top5)}只候选")
