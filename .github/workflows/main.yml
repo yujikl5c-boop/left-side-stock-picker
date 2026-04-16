@@ -2,30 +2,52 @@ name: Left Side Stock Picker
 
 on:
   schedule:
-    - cron: '25 6 * * *'
-    - cron: '10 7 * * *'
-  workflow_dispatch:
+    - cron: '30 6 * * *'   # 北京时间 14:30
+    - cron: '10 7 * * *'   # 北京时间 15:10
+  workflow_dispatch:        # 允许手动触发
 
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 jobs:
-  run:
+  run-strategy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Python
+      - name: 1. 下载代码
+        uses: actions/checkout@v4
+
+      - name: 2. 设置 Python 环境
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-      - name: Install
+
+      - name: 3. 安装依赖
         run: pip install -r requirements.txt
-      - name: Run
+
+      - name: 4. 运行选股程序
         run: python main.py candidates
-      - name: Commit
+        # 如果你希望支持传入模式（如 history），可以改成 python main.py ${{ github.event.inputs.run_mode || 'candidates' }}
+        # 但这里先固定为 candidates
+
+      - name: 5. 提交结果到仓库
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add left_daily_candidates.json left_dashboard.html left_history.json || true
-          git diff --cached --quiet || git commit -m "auto update"
+          git add -A
+          git status
+          git commit -m "Auto update $(date '+%Y-%m-%d %H:%M')" || echo "No changes to commit"
           git push
+
+      - name: 6. 准备部署网页
+        uses: actions/configure-pages@v5
+
+      - name: 7. 打包网页文件
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'   # 将整个仓库根目录作为网页内容
+
+      - name: 8. 发布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
