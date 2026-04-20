@@ -18,10 +18,6 @@ venv.bak/
 *.swp
 *.swo
 
-# 自动生成的数据文件（每次运行会产生，不需要上传）
-left_history.json
-left_dashboard.html
-
 # 日志文件
 *.log
 
