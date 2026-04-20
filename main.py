@@ -88,7 +88,6 @@ def analyze_left_buy(stock_info, client):
         if not buy_signal:
             return None
 
-        # 获取每股收益 EPS
         eps = 0.0
         try:
             fin_df = client.finance(symbol=symbol)
@@ -247,6 +246,36 @@ if __name__ == '__main__':
     stock_list = meta_df.to_dict('records')
 
     if mode == 'candidates':
+        # ========== 1. 结转昨日候选到历史池 ==========
+        if os.path.exists(DAILY_CANDIDATES_FILE):
+            with open(DAILY_CANDIDATES_FILE, 'r', encoding='utf-8') as f:
+                yest = json.load(f)
+            if yest.get('date') and yest['date'] != today:
+                print(f"📦 发现昨日 ({yest['date']}) 抄底候选，正在移入历史回溯池...")
+                history = load_history(LEFT_HISTORY_FILE)
+                for c in yest.get('left', []):
+                    if not any(r['code'] == c['code'] and r['buy_date'] == yest['date'] for r in history):
+                        history.append({
+                            'code': c['code'],
+                            'name': c['name'],
+                            'buy_price': c['price'],
+                            'buy_date': yest['date'],
+                            'buy_day_low': c['low'],
+                            'latest_price': c['price'],
+                            'eps': c.get('eps', 0.0)
+                        })
+                if history:
+                    save_history(history, LEFT_HISTORY_FILE)
+                    print(f"✅ 已结转 {len(yest.get('left', []))} 只股票到历史池")
+        # ========== 2. 更新历史池（价格+卖出判断） ==========
+        history = load_history(LEFT_HISTORY_FILE)
+        if history:
+            print("正在更新历史池价格并判断卖出...")
+            changed = update_history_with_sell(history, client, today)
+            if changed:
+                save_history(history, LEFT_HISTORY_FILE)
+                print("历史池状态已更新")
+        # ========== 3. 扫描选股 ==========
         total = len(stock_list)
         print(f"扫描抄底信号... 共 {total} 只股票")
         buy_candidates = []
@@ -268,26 +297,18 @@ if __name__ == '__main__':
         with open(DAILY_CANDIDATES_FILE, 'w', encoding='utf-8') as f:
             json.dump({'date': today, 'left': top5}, f, ensure_ascii=False, indent=4)
         print(f"保存{len(top5)}只候选")
+
     elif mode == 'history':
-        # 结转昨日候选
-        if os.path.exists(DAILY_CANDIDATES_FILE):
-            with open(DAILY_CANDIDATES_FILE, 'r') as f:
-                yest = json.load(f)
-            if yest.get('date') and yest['date'] != today:
-                history = load_history(LEFT_HISTORY_FILE)
-                for c in yest.get('left', []):
-                    if not any(r['code'] == c['code'] and r['buy_date'] == yest['date'] for r in history):
-                        history.append({
-                            'code': c['code'], 'name': c['name'],
-                            'buy_price': c['price'], 'buy_date': yest['date'],
-                            'buy_day_low': c['low'], 'latest_price': c['price'],
-                            'eps': c.get('eps', 0.0)
-                        })
-                save_history(history, LEFT_HISTORY_FILE)
+        # ========== 只更新历史池（价格+卖出判断），不做结转 ==========
         history = load_history(LEFT_HISTORY_FILE)
         if history:
+            print("正在更新历史池价格并判断卖出...")
             changed = update_history_with_sell(history, client, today)
             if changed:
                 save_history(history, LEFT_HISTORY_FILE)
+                print("历史池状态已更新")
+        else:
+            print("历史池为空，无需更新")
+
     generate_dashboard(today, now_time)
     os._exit(0)
