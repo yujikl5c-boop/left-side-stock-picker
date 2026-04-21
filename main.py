@@ -84,7 +84,7 @@ def analyze_left_buy(stock_info, client):
         bias_ok = curr['BIAS_VAL'] < -BIAS_THRESH
         cond1 = (curr['最低'] <= curr['LOWER']) and bias_ok
         cond2 = (curr['收盘'] > curr['开盘']) and ((curr['收盘'] - curr['最低']) > (curr['最高'] - curr['收盘']))
-        buy_signal = cond1 and cond2
+        buy_signal = bias_ok and cond1 and cond2
         if not buy_signal:
             return None
 
