@@ -1,1 +1,22 @@
-[]
+[
+    {
+        "code": "300033",
+        "name": "同花顺",
+        "buy_price": 245.68,
+        "buy_date": "2026-04-20",
+        "buy_day_low": 239.0,
+        "latest_price": 245.08,
+        "eps": 4.258,
+        "latest_update": "2026-04-21"
+    },
+    {
+        "code": "600486",
+        "name": "扬农化工",
+        "buy_price": 71.3,
+        "buy_date": "2026-04-20",
+        "buy_day_low": 69.51,
+        "latest_price": 72.31,
+        "eps": 3.173,
+        "latest_update": "2026-04-21"
+    }
+]
