@@ -5,9 +5,9 @@
         "buy_price": 245.68,
         "buy_date": "2026-04-20",
         "buy_day_low": 239.0,
-        "latest_price": 245.77,
+        "latest_price": 246.94,
         "eps": 4.258,
-        "latest_update": "2026-04-21"
+        "latest_update": "2026-04-22"
     },
     {
         "code": "600486",
@@ -15,8 +15,8 @@
         "buy_price": 71.3,
         "buy_date": "2026-04-20",
         "buy_day_low": 69.51,
-        "latest_price": 72.41,
+        "latest_price": 70.36,
         "eps": 3.173,
-        "latest_update": "2026-04-21"
+        "latest_update": "2026-04-22"
     }
 ]
