@@ -28,11 +28,12 @@ jobs:
       - name: Rebuild dashboard with ratings
         run: python build_dashboard_with_ratings.py
 
-      # 新增步骤：把生成的网页放到一个单独目录，供上传使用
+      # 准备发布目录：复制生成的网页 + 创建 CNAME 文件
       - name: Prepare publish directory
         run: |
           mkdir -p publish
           cp left_dashboard.html publish/
+          echo 'www.stockpool.ltd' > publish/CNAME
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -40,7 +41,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./publish          # 上传整个目录
+          path: ./publish
 
       - name: Deploy to GitHub Pages
         id: deployment
