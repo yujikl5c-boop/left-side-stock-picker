@@ -1,38 +1,44 @@
 {
-  "last_updated": "2026-04-26T20:35:57.223205+00:00",
+  "last_updated": "2026-04-26T22:12:06.449694+00:00",
   "ratings": [
     {
       "code": "000818",
       "date": "2026-04-26",
       "rating": "C",
       "score": 50,
-      "summary": "财务指标待补充",
+      "summary": "财务数据更新中",
       "risk": "暂无明显风险",
       "pe": "N/A",
       "pb": "N/A",
-      "roe": "N/A"
+      "roe": "N/A",
+      "close_price": "N/A",
+      "change_pct": "N/A"
     },
     {
       "code": "600547",
       "date": "2026-04-26",
       "rating": "C",
       "score": 50,
-      "summary": "财务指标待补充",
+      "summary": "财务数据更新中",
       "risk": "暂无明显风险",
       "pe": "N/A",
       "pb": "N/A",
-      "roe": "N/A"
+      "roe": "N/A",
+      "close_price": "N/A",
+      "change_pct": "N/A"
     },
     {
       "code": "000975",
       "date": "2026-04-26",
       "rating": "C",
       "score": 50,
-      "summary": "财务指标待补充",
+      "summary": "财务数据更新中",
       "risk": "暂无明显风险",
       "pe": "N/A",
       "pb": "N/A",
-      "roe": "N/A"
+      "roe": "N/A",
+      "close_price": "N/A",
+      "change_pct": "N/A"
     }
   ]
 }
