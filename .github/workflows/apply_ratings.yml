@@ -1,26 +1,31 @@
 name: Apply AI Ratings to Dashboard
 
 on:
-  workflow_dispatch:          # 允许手动触发 / API 触发
-  repository_dispatch:        # 允许外部 webhook 触发
+  workflow_dispatch:
+  repository_dispatch:
     types: [ratings_updated]
+
+# 给予 GITHUB_TOKEN 写权限
+permissions:
+  contents: write
 
 jobs:
   rebuild:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
-      
+          python-version: '3.11'
+
       - name: Rebuild dashboard with ratings
         run: python build_dashboard_with_ratings.py
-      
+
       - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./
