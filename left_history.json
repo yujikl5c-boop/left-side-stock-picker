@@ -1,0 +1,71 @@
+[
+    {
+        "code": "300033",
+        "name": "同花顺",
+        "buy_price": 245.68,
+        "buy_date": "2026-04-20",
+        "buy_day_low": 239.0,
+        "latest_price": 236.98,
+        "eps": 4.258,
+        "latest_update": "2026-04-23",
+        "sell_date": "2026-04-23",
+        "sell_reason": "破位止损 (跌破买入日最低价 239.00)",
+        "sell_price": 236.98
+    },
+    {
+        "code": "600486",
+        "name": "扬农化工",
+        "buy_price": 71.3,
+        "buy_date": "2026-04-20",
+        "buy_day_low": 69.51,
+        "latest_price": 72.45,
+        "eps": 3.173,
+        "latest_update": "2026-04-24"
+    },
+    {
+        "code": "000818",
+        "name": "航锦科技",
+        "buy_price": 14.45,
+        "buy_date": "2026-04-22",
+        "buy_day_low": 13.88,
+        "latest_price": 14.56,
+        "eps": 0.023,
+        "latest_update": "2026-04-24"
+    },
+    {
+        "code": "603568",
+        "name": "伟明环保",
+        "buy_price": 20.9,
+        "buy_date": "2026-04-22",
+        "buy_day_low": 20.67,
+        "latest_price": 20.83,
+        "eps": 1.294,
+        "latest_update": "2026-04-24"
+    },
+    {
+        "code": "300033",
+        "name": "同花顺",
+        "buy_price": 246.99,
+        "buy_date": "2026-04-22",
+        "buy_day_low": 241.78,
+        "latest_price": 236.98,
+        "eps": 4.258,
+        "latest_update": "2026-04-23",
+        "sell_date": "2026-04-23",
+        "sell_reason": "破位止损 (跌破买入日最低价 241.78)",
+        "sell_price": 236.98
+    },
+    {
+        "code": "603568",
+        "name": "伟明环保",
+        "buy_price": 21.3,
+        "buy_date": "2026-04-23",
+        "buy_day_low": 20.97,
+        "latest_price": 20.96,
+        "eps": 1.294,
+        "latest_update": "2026-04-24",
+        "sell_date": "2026-04-24",
+        "sell_reason": "破位止损 (跌破买入日最低价 20.97)",
+        "sell_price": 20.96
+    }
+]
