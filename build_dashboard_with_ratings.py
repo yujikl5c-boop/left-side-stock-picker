@@ -8,7 +8,7 @@ LEFT_HISTORY_FILE = 'left_history.json'
 RATINGS_FILE = 'ratings.json'
 HTML_OUTPUT = 'left_dashboard.html'
 
-# ========== 策略参数（用于页面展示） ==========
+# ========== 策略参数（展示用） ==========
 P1 = 8.0
 P2 = 9.0
 BIAS_THRESH = 6.0
@@ -36,7 +36,7 @@ def generate_dashboard_with_ratings():
 
     history_sorted = sorted(history, key=lambda x: x.get('buy_date', ''), reverse=True)
 
-    # ========== 开始拼接 HTML ==========
+    # ========== HTML 头部 ==========
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"><title>左侧抄底看板</title>
@@ -45,11 +45,31 @@ def generate_dashboard_with_ratings():
 body{{background:#f8f9fa;padding:20px;}}
 .positive{{color:#dc3545;}}
 .negative{{color:#198754;}}
-.rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
-.rating-B{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
-.rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;}}
-.rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
-.rating-unknown{{background-color:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
+.rating-B{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
+.rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
+.rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
+.rating-unknown{{background-color:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
+/* 自定义 tooltip 样式（可选，增强悬停体验） */
+[title] {{
+  position: relative;
+}}
+[title]:hover::after {{
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  max-width: 300px;
+  font-size: 0.85rem;
+  z-index: 999;
+  pointer-events: none;
+}}
 </style>
 </head>
 <body>
@@ -65,7 +85,6 @@ body{{background:#f8f9fa;padding:20px;}}
 
     for s in daily.get('left', []):
         code = s.get('code', '')
-        # 查找评级数据（当日候选的 date 用今天）
         key = f"{code}_{today_date}"
         r = rating_map.get(key, {})
         rating = r.get('rating', '-')
@@ -95,6 +114,15 @@ body{{background:#f8f9fa;padding:20px;}}
         r = rating_map.get(key, {})
         rating = r.get('rating', '-')
         score = r.get('score', '-')
+        summary = r.get('summary', '')
+        risk = r.get('risk', '')
+        # 构建 tooltip 内容（摘要 + 风险提示）
+        tooltip_parts = []
+        if summary:
+            tooltip_parts.append(f"📊 {summary}")
+        if risk:
+            tooltip_parts.append(f"⚠️ {risk}")
+        tooltip = "\n".join(tooltip_parts) if tooltip_parts else ""
         rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
 
         buy_price = rec.get('buy_price', 0)
@@ -113,7 +141,7 @@ body{{background:#f8f9fa;padding:20px;}}
 <td>{buy_date}</td><td>{code}</td><td>{rec.get('name','')}</td>
 <td>{buy_price:.2f}</td><td>{rec.get('buy_day_low', buy_price):.2f}</td><td>{latest_price:.2f}</td>
 <td class='{color}'>{pct:+.2f}%</td><td>{rec.get('eps',0):.3f}</td>
-<td><span class="{rating_class}">{rating}</span></td><td>{score}</td>
+<td><span class="{rating_class}" title="{tooltip}">{rating}</span></td><td>{score}</td>
 <td>{status}</td><td>{reason}</td>
 </tr>"""
 
