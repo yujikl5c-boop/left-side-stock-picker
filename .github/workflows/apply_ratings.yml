@@ -5,13 +5,17 @@ on:
   repository_dispatch:
     types: [ratings_updated]
 
-# 给予 GITHUB_TOKEN 写权限
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   rebuild:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -24,9 +28,14 @@ jobs:
       - name: Rebuild dashboard with ratings
         run: python build_dashboard_with_ratings.py
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          keep_files: true
+          path: ./left_dashboard.html    # 若想保留整个站点资源（CSS/JS），可改为 ./
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
