@@ -28,13 +28,19 @@ jobs:
       - name: Rebuild dashboard with ratings
         run: python build_dashboard_with_ratings.py
 
+      # 新增步骤：把生成的网页放到一个单独目录，供上传使用
+      - name: Prepare publish directory
+        run: |
+          mkdir -p publish
+          cp left_dashboard.html publish/
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./left_dashboard.html    # 若想保留整个站点资源（CSS/JS），可改为 ./
+          path: ./publish          # 上传整个目录
 
       - name: Deploy to GitHub Pages
         id: deployment
