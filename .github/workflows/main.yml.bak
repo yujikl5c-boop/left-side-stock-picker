@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       run_mode:
-        description: '运行模式 (candidates / history / refresh / auto)'
+        description: '运行模式 (candidates / history / auto)'
         required: false
         default: 'auto'
 
