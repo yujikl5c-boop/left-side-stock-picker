@@ -45,13 +45,14 @@ def generate_dashboard_with_ratings():
 body{{background:#f8f9fa;padding:20px;}}
 .positive{{color:#dc3545;}}
 .negative{{color:#198754;}}
-.rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
-.rating-B{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
-.rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
-.rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
-.rating-unknown{{background-color:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;cursor:help;}}
-/* 自定义 tooltip 样式（可选，增强悬停体验） */
+.rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-B{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-unknown{{background-color:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+/* 仅历史池有悬停提示时生效 */
 [title] {{
+  cursor: help;
   position: relative;
 }}
 [title]:hover::after {{
@@ -92,6 +93,7 @@ body{{background:#f8f9fa;padding:20px;}}
         summary = r.get('summary', '-')
         risk = r.get('risk', '-')
         rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
+        # 今日候选区域不添加 title 属性（无悬停提示）
         html += f"""<tr>
 <td>{code}</td><td>{s.get('name','')}</td><td>{s.get('price',0):.2f}</td>
 <td>{s.get('bias_val',0):.2f}</td><td>{s.get('low',0):.2f}</td><td>{s.get('eps',0):.3f}</td>
@@ -116,13 +118,16 @@ body{{background:#f8f9fa;padding:20px;}}
         score = r.get('score', '-')
         summary = r.get('summary', '')
         risk = r.get('risk', '')
-        # 构建 tooltip 内容（摘要 + 风险提示）
-        tooltip_parts = []
-        if summary:
-            tooltip_parts.append(f"📊 {summary}")
-        if risk:
-            tooltip_parts.append(f"⚠️ {risk}")
-        tooltip = "\n".join(tooltip_parts) if tooltip_parts else ""
+        # 构建 tooltip 内容
+        if rating == '-' or not r:
+            tooltip = "暂无信息"
+        else:
+            tooltip_parts = []
+            if summary:
+                tooltip_parts.append(f"📊 {summary}")
+            if risk:
+                tooltip_parts.append(f"⚠️ {risk}")
+            tooltip = "\n".join(tooltip_parts) if tooltip_parts else ""
         rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
 
         buy_price = rec.get('buy_price', 0)
