@@ -313,7 +313,11 @@ if __name__ == '__main__':
     now_time = beijing_now.strftime('%Y-%m-%d %H:%M:%S')
     mode = 'auto' if len(sys.argv) == 1 else sys.argv[1]
     if mode == 'auto':
-        mode = 'history' if beijing_now.hour >= 15 else 'candidates'
+    # 14:50 及以后视为收盘后，运行 history 模式
+    if beijing_now.hour >= 15 or (beijing_now.hour == 14 and beijing_now.minute >= 50):
+        mode = 'history'
+    else:
+        mode = 'candidates'
     print(f"运行模式: {mode}")
 
     # 连接服务器
