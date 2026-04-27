@@ -33,8 +33,9 @@ EXCEL_LIST = 'stock_list.xlsx'
 DAILY_CANDIDATES_FILE = 'left_daily_candidates.json'
 LEFT_HISTORY_FILE = 'left_history.json'
 HTML_OUTPUT = 'left_dashboard.html'
-RATINGS_FILE = 'ratings.json'   # 新增：AI评级文件路径
+RATINGS_FILE = 'ratings.json'
 
+# ========== 工具函数 ==========
 def convert_numpy(obj):
     if isinstance(obj, dict):
         return {k: convert_numpy(v) for k, v in obj.items()}
@@ -62,17 +63,16 @@ def save_history(data, file_path):
         json.dump(convert_numpy(data), f, ensure_ascii=False, indent=4)
 
 def load_ratings():
-    """加载ratings.json，返回格式为 {'ratings': [...]}"""
     if os.path.exists(RATINGS_FILE):
         with open(RATINGS_FILE, 'r', encoding='utf-8') as f:
             return json.load(f)
     return {'ratings': []}
 
 def save_ratings(data):
-    """保存ratings.json"""
     with open(RATINGS_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+# ========== 选股与卖出逻辑（保持不变） ==========
 def analyze_left_buy(stock_info, client):
     symbol = stock_info['code']
     try:
@@ -184,37 +184,108 @@ def update_history_with_sell(history, client, today_date):
             continue
     return updated
 
+# ========== 看板生成（固定格式，含 AI 评级列） ==========
 def generate_dashboard(today_date, now_time):
+    daily = {}
     if os.path.exists(DAILY_CANDIDATES_FILE):
         with open(DAILY_CANDIDATES_FILE, 'r', encoding='utf-8') as f:
             daily = json.load(f)
-    else:
-        daily = {'left': []}
     history = load_history(LEFT_HISTORY_FILE)
-    history_sorted = sorted(history, key=lambda x: x['buy_date'], reverse=True)
+    ratings_data = load_ratings()
+    rating_map = {}
+    for r in ratings_data.get('ratings', []):
+        key = f"{r.get('code','')}_{r.get('date','')}"
+        rating_map[key] = r
+    history_sorted = sorted(history, key=lambda x: x.get('buy_date',''), reverse=True)
 
+    # === HTML 头部，加入悬停样式 ===
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"><title>左侧抄底看板</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-<style>body{{background:#f8f9fa;padding:20px;}}.positive{{color:#dc3545;}}.negative{{color:#198754;}}</style>
+<style>
+body{{background:#f8f9fa;padding:20px;}}
+.positive{{color:#dc3545;}}
+.negative{{color:#198754;}}
+.rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-B{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-unknown{{background-color:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+[title] {{ cursor: help; position: relative; }}
+[title]:hover::after {{
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  transform: translateX(-50%);
+  background: #333;
+  color: #fff;
+  padding: 4px 8px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  max-width: 300px;
+  font-size: 0.85rem;
+  z-index: 999;
+  pointer-events: none;
+}}
+</style>
 </head>
 <body>
 <h2>左侧抄底系统 <small>{now_time}</small></h2>
 <div class="alert alert-info">参数: 下轨{P2}%, 上轨{P1}%, 乖离率&lt;-{BIAS_THRESH}%</div>
+
+<!-- 今日抄底候选 -->
 <div class="card mb-4"><div class="card-header bg-primary text-white">今日抄底候选</div>
-<div class="card-body"><table class="table"><thead><tr><th>代码</th><th>名称</th><th>最新价</th><th>乖离率%</th><th>当日最低价</th><th>每股收益</th></tr></thead><tbody>"""
+<div class="card-body"><table class="table"><thead><tr>
+<th>代码</th><th>名称</th><th>最新价</th><th>乖离率%</th><th>当日最低价</th><th>每股收益</th>
+<th>AI评级</th><th>评分</th><th>摘要</th><th>风险提示</th>
+</tr></thead><tbody>"""
+
     for s in daily.get('left', []):
-        html += f"<tr><td>{s['code']}</td><td>{s['name']}</td><td>{s['price']:.2f}</td><td>{s['bias_val']:.2f}</td><td>{s['low']:.2f}</td><td>{s.get('eps', 0.0):.3f}</td></tr>"
+        code = s.get('code', '')
+        key = f"{code}_{today_date}"
+        r = rating_map.get(key, {})
+        rating = r.get('rating', '-')
+        score = r.get('score', '-')
+        summary = r.get('summary', '-')
+        risk = r.get('risk', '-')
+        rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
+        html += f"""<tr>
+<td>{code}</td><td>{s.get('name','')}</td><td>{s.get('price',0):.2f}</td>
+<td>{s.get('bias_val',0):.2f}</td><td>{s.get('low',0):.2f}</td><td>{s.get('eps',0):.3f}</td>
+<td><span class="{rating_class}">{rating}</span></td><td>{score}</td><td>{summary}</td><td>{risk}</td>
+</tr>"""
     if not daily.get('left'):
-        html += "<tr><td colspan='6'>暂无抄底信号</td></tr>"
-    html += """</tbody></table></div></div>
-<div class="card"><div class="card-header bg-secondary text-white">历史追溯池</div>
-<div class="card-body"><table class="table"><thead><tr><th>买入日期</th><th>代码</th><th>名称</th><th>买入价</th><th>生命线</th><th>最新价</th><th>涨跌%</th><th>每股收益</th><th>状态</th><th>卖出原因</th></tr></thead><tbody>"""
+        html += "<tr><td colspan='10'>暂无抄底信号</td></tr>"
+    html += "</tbody></table></div></div>"
+
+    # 历史追溯池
+    html += """<div class="card"><div class="card-header bg-secondary text-white">历史追溯池</div>
+<div class="card-body"><table class="table"><thead><tr>
+<th>买入日期</th><th>代码</th><th>名称</th><th>买入价</th><th>生命线</th><th>最新价</th><th>涨跌%</th><th>每股收益</th><th>AI评级</th><th>评分</th><th>状态</th><th>卖出原因</th>
+</tr></thead><tbody>"""
+
     for rec in history_sorted:
-        buy_price = rec['buy_price']
+        code = rec.get('code', '')
+        buy_date = rec.get('buy_date', '')
+        key = f"{code}_{buy_date}"
+        r = rating_map.get(key, {})
+        rating = r.get('rating', '-')
+        score = r.get('score', '-')
+        summary = r.get('summary', '')
+        risk = r.get('risk', '')
+        if rating == '-' or not r:
+            tooltip = "暂无信息"
+        else:
+            parts = []
+            if summary: parts.append(f"📊 {summary}")
+            if risk: parts.append(f"⚠️ {risk}")
+            tooltip = "\n".join(parts) if parts else ""
+        rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
+        buy_price = rec.get('buy_price', 0)
         latest_price = rec.get('latest_price', buy_price)
-        pct = (latest_price / buy_price - 1) * 100
+        pct = (latest_price / buy_price - 1) * 100 if buy_price else 0
         color = 'positive' if pct > 0 else 'negative' if pct < 0 else ''
         if rec.get('sell_date'):
             status = f"已卖出({rec['sell_date']})"
@@ -222,12 +293,20 @@ def generate_dashboard(today_date, now_time):
         else:
             status = "持有中"
             reason = "-"
-        html += f"<tr><td>{rec['buy_date']}</td><td>{rec['code']}</td><td>{rec['name']}</td><td>{buy_price:.2f}</td><td>{rec.get('buy_day_low', buy_price):.2f}</td><td>{latest_price:.2f}</td><td class='{color}'>{pct:+.2f}%</td><td>{rec.get('eps', 0.0):.3f}</td><td>{status}</td><td>{reason}</td></tr>"
+        html += f"""<tr>
+<td>{buy_date}</td><td>{code}</td><td>{rec.get('name','')}</td>
+<td>{buy_price:.2f}</td><td>{rec.get('buy_day_low', buy_price):.2f}</td><td>{latest_price:.2f}</td>
+<td class='{color}'>{pct:+.2f}%</td><td>{rec.get('eps',0):.3f}</td>
+<td><span class="{rating_class}" title="{tooltip}">{rating}</span></td><td>{score}</td>
+<td>{status}</td><td>{reason}</td>
+</tr>"""
     html += "</tbody></table></div></div></body></html>"
+
     with open(HTML_OUTPUT, 'w', encoding='utf-8') as f:
         f.write(html)
     print(f"看板已生成: {HTML_OUTPUT}")
 
+# ========== 主流程 ==========
 if __name__ == '__main__':
     beijing_now = datetime.now(timezone.utc) + timedelta(hours=8)
     today = beijing_now.strftime('%Y-%m-%d')
@@ -259,7 +338,7 @@ if __name__ == '__main__':
     stock_list = meta_df.to_dict('records')
 
     if mode == 'candidates':
-        # ========== 1. 结转昨日候选到历史池 ==========
+        # 1. 结转昨日候选到历史池
         if os.path.exists(DAILY_CANDIDATES_FILE):
             with open(DAILY_CANDIDATES_FILE, 'r', encoding='utf-8') as f:
                 yest = json.load(f)
@@ -281,28 +360,26 @@ if __name__ == '__main__':
                     save_history(history, LEFT_HISTORY_FILE)
                     print(f"✅ 已结转 {len(yest.get('left', []))} 只股票到历史池")
 
-                # ========== 新增：同步 AI 评级到历史池（基于买入日期） ==========
+                # 同步 AI 评级到历史日期
                 ratings = load_ratings()
                 existing_keys = {f"{r['code']}_{r['date']}" for r in ratings['ratings']}
                 added = 0
                 for c in yest.get('left', []):
-                    # 查找该股票在昨日日期对应的评级记录
                     for r in ratings['ratings']:
                         if r['code'] == c['code'] and r['date'] == yest['date']:
                             new_key = f"{r['code']}_{yest['date']}"
                             if new_key not in existing_keys:
-                                # 复制一份记录，确保日期就是买入日期（通常已一致）
                                 record = dict(r)
                                 record['date'] = yest['date']
                                 ratings['ratings'].append(record)
                                 existing_keys.add(new_key)
                                 added += 1
-                            break   # 已找到该股票的评级，无需继续查找
+                            break
                 if added > 0:
                     save_ratings(ratings)
                     print(f"✅ 已同步 {added} 条 AI 评级到历史池日期")
 
-        # ========== 2. 更新历史池（价格+卖出判断） ==========
+        # 2. 更新历史池（价格+卖出判断）
         history = load_history(LEFT_HISTORY_FILE)
         if history:
             print("正在更新历史池价格并判断卖出...")
@@ -310,7 +387,8 @@ if __name__ == '__main__':
             if changed:
                 save_history(history, LEFT_HISTORY_FILE)
                 print("历史池状态已更新")
-        # ========== 3. 扫描选股 ==========
+
+        # 3. 扫描选股
         total = len(stock_list)
         print(f"扫描抄底信号... 共 {total} 只股票")
         buy_candidates = []
@@ -334,7 +412,6 @@ if __name__ == '__main__':
         print(f"保存{len(top5)}只候选")
 
     elif mode == 'history':
-        # ========== 只更新历史池（价格+卖出判断），不做结转 ==========
         history = load_history(LEFT_HISTORY_FILE)
         if history:
             print("正在更新历史池价格并判断卖出...")
