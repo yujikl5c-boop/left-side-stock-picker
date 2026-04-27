@@ -33,6 +33,7 @@ EXCEL_LIST = 'stock_list.xlsx'
 DAILY_CANDIDATES_FILE = 'left_daily_candidates.json'
 LEFT_HISTORY_FILE = 'left_history.json'
 HTML_OUTPUT = 'left_dashboard.html'
+RATINGS_FILE = 'ratings.json'   # 新增：AI评级文件路径
 
 def convert_numpy(obj):
     if isinstance(obj, dict):
@@ -59,6 +60,18 @@ def load_history(file_path):
 def save_history(data, file_path):
     with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(convert_numpy(data), f, ensure_ascii=False, indent=4)
+
+def load_ratings():
+    """加载ratings.json，返回格式为 {'ratings': [...]}"""
+    if os.path.exists(RATINGS_FILE):
+        with open(RATINGS_FILE, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    return {'ratings': []}
+
+def save_ratings(data):
+    """保存ratings.json"""
+    with open(RATINGS_FILE, 'w', encoding='utf-8') as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
 
 def analyze_left_buy(stock_info, client):
     symbol = stock_info['code']
@@ -267,6 +280,28 @@ if __name__ == '__main__':
                 if history:
                     save_history(history, LEFT_HISTORY_FILE)
                     print(f"✅ 已结转 {len(yest.get('left', []))} 只股票到历史池")
+
+                # ========== 新增：同步 AI 评级到历史池（基于买入日期） ==========
+                ratings = load_ratings()
+                existing_keys = {f"{r['code']}_{r['date']}" for r in ratings['ratings']}
+                added = 0
+                for c in yest.get('left', []):
+                    # 查找该股票在昨日日期对应的评级记录
+                    for r in ratings['ratings']:
+                        if r['code'] == c['code'] and r['date'] == yest['date']:
+                            new_key = f"{r['code']}_{yest['date']}"
+                            if new_key not in existing_keys:
+                                # 复制一份记录，确保日期就是买入日期（通常已一致）
+                                record = dict(r)
+                                record['date'] = yest['date']
+                                ratings['ratings'].append(record)
+                                existing_keys.add(new_key)
+                                added += 1
+                            break   # 已找到该股票的评级，无需继续查找
+                if added > 0:
+                    save_ratings(ratings)
+                    print(f"✅ 已同步 {added} 条 AI 评级到历史池日期")
+
         # ========== 2. 更新历史池（价格+卖出判断） ==========
         history = load_history(LEFT_HISTORY_FILE)
         if history:
