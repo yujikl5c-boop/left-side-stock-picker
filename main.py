@@ -207,7 +207,8 @@ body{{background:#f8f9fa;padding:20px;}}
 .positive{{color:#dc3545;}}
 .negative{{color:#198754;}}
 .rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
-.rating-B{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-B\+{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-B{{background-color:#0d6efd;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
 .rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;}}
 .rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
 .rating-unknown{{background-color:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
@@ -248,6 +249,7 @@ body{{background:#f8f9fa;padding:20px;}}
         score = r.get('score', '-')
         summary = r.get('summary', '-')
         risk = r.get('risk', '-')
+        # 生成 CSS 类名，B+ 等特殊字符会在 HTML 中自动变为 class="rating-B+"
         rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
         html += f"""<tr>
 <td>{code}</td><td>{s.get('name','')}</td><td>{s.get('price',0):.2f}</td>
@@ -310,7 +312,6 @@ if __name__ == '__main__':
     now_time = beijing_now.strftime('%Y-%m-%d %H:%M:%S')
     mode = 'auto' if len(sys.argv) == 1 else sys.argv[1]
     if mode == 'auto':
-        # 北京时间 14:50 及以后视为收盘后，运行 history 模式
         if beijing_now.hour >= 15 or (beijing_now.hour == 14 and beijing_now.minute >= 50):
             mode = 'history'
         else:
