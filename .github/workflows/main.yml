@@ -1,15 +1,14 @@
 name: Left Side Stock Picker
 
 on:
-  schedule:
-    - cron: '25 6 * * *'   # 北京时间14:25
-    - cron: '10 7 * * *'   # 北京时间15:10
   workflow_dispatch:
     inputs:
       run_mode:
         description: '运行模式 (candidates / history / auto)'
         required: false
         default: 'auto'
+  repository_dispatch:
+    types: [run_main]
 
 permissions:
   contents: write
@@ -34,6 +33,9 @@ jobs:
       - name: 4. 运行主程序
         run: |
           MODE="${{ github.event.inputs.run_mode }}"
+          if [ -z "$MODE" ]; then
+            MODE="${{ github.event.client_payload.mode }}"
+          fi
           if [ -z "$MODE" ]; then
             MODE="auto"
           fi
