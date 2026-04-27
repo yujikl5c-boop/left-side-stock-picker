@@ -72,7 +72,7 @@ def save_ratings(data):
     with open(RATINGS_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-# ========== 选股与卖出逻辑（保持不变） ==========
+# ========== 选股与卖出逻辑 ==========
 def analyze_left_buy(stock_info, client):
     symbol = stock_info['code']
     try:
@@ -198,7 +198,6 @@ def generate_dashboard(today_date, now_time):
         rating_map[key] = r
     history_sorted = sorted(history, key=lambda x: x.get('buy_date',''), reverse=True)
 
-    # === HTML 头部，加入悬停样式 ===
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
 <head><meta charset="UTF-8"><title>左侧抄底看板</title>
@@ -235,7 +234,6 @@ body{{background:#f8f9fa;padding:20px;}}
 <h2>左侧抄底系统 <small>{now_time}</small></h2>
 <div class="alert alert-info">参数: 下轨{P2}%, 上轨{P1}%, 乖离率&lt;-{BIAS_THRESH}%</div>
 
-<!-- 今日抄底候选 -->
 <div class="card mb-4"><div class="card-header bg-primary text-white">今日抄底候选</div>
 <div class="card-body"><table class="table"><thead><tr>
 <th>代码</th><th>名称</th><th>最新价</th><th>乖离率%</th><th>当日最低价</th><th>每股收益</th>
@@ -260,7 +258,6 @@ body{{background:#f8f9fa;padding:20px;}}
         html += "<tr><td colspan='10'>暂无抄底信号</td></tr>"
     html += "</tbody></table></div></div>"
 
-    # 历史追溯池
     html += """<div class="card"><div class="card-header bg-secondary text-white">历史追溯池</div>
 <div class="card-body"><table class="table"><thead><tr>
 <th>买入日期</th><th>代码</th><th>名称</th><th>买入价</th><th>生命线</th><th>最新价</th><th>涨跌%</th><th>每股收益</th><th>AI评级</th><th>评分</th><th>状态</th><th>卖出原因</th>
@@ -313,11 +310,11 @@ if __name__ == '__main__':
     now_time = beijing_now.strftime('%Y-%m-%d %H:%M:%S')
     mode = 'auto' if len(sys.argv) == 1 else sys.argv[1]
     if mode == 'auto':
-    # 14:50 及以后视为收盘后，运行 history 模式
-    if beijing_now.hour >= 15 or (beijing_now.hour == 14 and beijing_now.minute >= 50):
-        mode = 'history'
-    else:
-        mode = 'candidates'
+        # 北京时间 14:50 及以后视为收盘后，运行 history 模式
+        if beijing_now.hour >= 15 or (beijing_now.hour == 14 and beijing_now.minute >= 50):
+            mode = 'history'
+        else:
+            mode = 'candidates'
     print(f"运行模式: {mode}")
 
     # 连接服务器
