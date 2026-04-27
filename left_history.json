@@ -18,9 +18,9 @@
         "buy_price": 71.3,
         "buy_date": "2026-04-20",
         "buy_day_low": 69.51,
-        "latest_price": 72.45,
+        "latest_price": 70.97,
         "eps": 3.173,
-        "latest_update": "2026-04-24"
+        "latest_update": "2026-04-27"
     },
     {
         "code": "000818",
@@ -28,9 +28,9 @@
         "buy_price": 14.45,
         "buy_date": "2026-04-22",
         "buy_day_low": 13.88,
-        "latest_price": 14.56,
+        "latest_price": 14.12,
         "eps": 0.023,
-        "latest_update": "2026-04-24"
+        "latest_update": "2026-04-27"
     },
     {
         "code": "603568",
@@ -38,9 +38,9 @@
         "buy_price": 20.9,
         "buy_date": "2026-04-22",
         "buy_day_low": 20.67,
-        "latest_price": 20.83,
+        "latest_price": 20.79,
         "eps": 1.294,
-        "latest_update": "2026-04-24"
+        "latest_update": "2026-04-27"
     },
     {
         "code": "300033",
@@ -67,5 +67,38 @@
         "sell_date": "2026-04-24",
         "sell_reason": "破位止损 (跌破买入日最低价 20.97)",
         "sell_price": 20.96
+    },
+    {
+        "code": "000818",
+        "name": "航锦科技",
+        "buy_price": 14.68,
+        "buy_date": "2026-04-24",
+        "buy_day_low": 14.3,
+        "latest_price": 14.12,
+        "eps": 0.023,
+        "latest_update": "2026-04-27",
+        "sell_date": "2026-04-27",
+        "sell_reason": "破位止损 (跌破买入日最低价 14.30)",
+        "sell_price": 14.12
+    },
+    {
+        "code": "600547",
+        "name": "山东黄金",
+        "buy_price": 35.73,
+        "buy_date": "2026-04-24",
+        "buy_day_low": 34.88,
+        "latest_price": 35.56,
+        "eps": 1.028,
+        "latest_update": "2026-04-27"
+    },
+    {
+        "code": "000975",
+        "name": "山金国际",
+        "buy_price": 27.69,
+        "buy_date": "2026-04-24",
+        "buy_day_low": 26.92,
+        "latest_price": 27.41,
+        "eps": 0.502,
+        "latest_update": "2026-04-27"
     }
 ]
