@@ -150,14 +150,25 @@ def rule_based_rating(pe, pb, roe):
     return rating, score, risk_str
 
 def send_feishu(ratings):
-    """推送飞书消息"""
+    """推送飞书消息（分行格式）"""
     if not FEISHU_WEBHOOK_URL:
         return
     today_str = datetime.now().strftime("%Y-%m-%d")
     lines = [f"📈 每日抄底 AI评级 ({today_str})"]
     for r in ratings:
-        line = f"{r['code']} | {r.get('name','')} | 综合评级{r['rating']} | PE {r['pe']}，PB {r['pb']}，ROE {r['roe']} | 风险: {r['risk']}"
-        lines.append(line)
+        code = r.get('code', '')
+        name = r.get('name', '')
+        rating = r.get('rating', '?')
+        pe = r.get('pe', 'N/A')
+        pb = r.get('pb', 'N/A')
+        roe = r.get('roe', 'N/A')
+        risk = r.get('risk', '')
+        lines.append(f"{code}")
+        lines.append(f"{name}")
+        lines.append(f"综合评级{rating}")
+        lines.append(f"PE {pe}，PB {pb}，ROE {roe}")
+        lines.append(f"风险: {risk}")
+        lines.append("")
     payload = {"msg_type": "text", "content": {"text": "\n".join(lines)}}
     req = urllib.request.Request(FEISHU_WEBHOOK_URL, data=json.dumps(payload).encode(),
                                  headers={"Content-Type": "application/json"})
@@ -524,15 +535,19 @@ if __name__ == '__main__':
                 roe_str = f"{roe:.2f}%" if isinstance(roe, float) else "N/A"
                 summary = f"PE {pe_str}，PB {pb_str}，ROE {roe_str}"
                 new_ratings.append({
-                    "code": code, "date": today_str, "rating": rating, "score": score,
+                    "code": code,
+                    "name": name,
+                    "date": today_str, "rating": rating, "score": score,
                     "summary": summary, "risk": risk_str,
-                    "pe": f"{pe:.2f}" if isinstance(pe, float) else "N/A",
-                    "pb": f"{pb:.2f}" if isinstance(pb, float) else "N/A",
-                    "roe": f"{roe:.2f}%" if isinstance(roe, float) else "N/A"
+                    "pe": pe_str,
+                    "pb": pb_str,
+                    "roe": roe_str
                 })
             else:
                 new_ratings.append({
-                    "code": code, "date": today_str, "rating": "C", "score": 50,
+                    "code": code,
+                    "name": name,
+                    "date": today_str, "rating": "C", "score": 50,
                     "summary": "财务数据获取失败", "risk": "数据源暂时不可用",
                     "pe": "N/A", "pb": "N/A", "roe": "N/A"
                 })
