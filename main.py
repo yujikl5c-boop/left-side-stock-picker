@@ -4,6 +4,8 @@ import json
 import sys
 import socket
 import time
+import urllib.request
+import urllib.error
 import numpy as np
 import pandas as pd
 from pathlib import Path
@@ -34,6 +36,10 @@ DAILY_CANDIDATES_FILE = 'left_daily_candidates.json'
 LEFT_HISTORY_FILE = 'left_history.json'
 HTML_OUTPUT = 'left_dashboard.html'
 RATINGS_FILE = 'ratings.json'
+
+# ========== 从环境变量读取密钥（安全） ==========
+MX_APIKEY = os.environ.get("MX_APIKEY", "")
+FEISHU_WEBHOOK_URL = os.environ.get("FEISHU_WEBHOOK_URL", "")
 
 # ========== 工具函数 ==========
 def convert_numpy(obj):
@@ -72,7 +78,95 @@ def save_ratings(data):
     with open(RATINGS_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
-# ========== 选股与卖出逻辑 ==========
+# ========== 妙想 API 查询 ==========
+def query_mx_data(code, name):
+    """调用妙想 API 获取财务数据"""
+    if not MX_APIKEY:
+        print("⚠️ MX_APIKEY 未设置，跳过评级")
+        return None
+    query = f"{name} {code} 市盈率PE(TTM) 市净率PB 净资产收益率ROE 收盘价 涨跌幅"
+    url = "https://mkapi2.dfcfs.com/finskillshub/api/claw/query"
+    headers = {"Content-Type": "application/json", "apikey": MX_APIKEY}
+    data = json.dumps({"toolQuery": query}).encode("utf-8")
+    req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except Exception as e:
+        print(f"⚠️ 妙想查询失败 ({code}): {e}")
+        return None
+
+def extract_latest(data, indicator_name):
+    """从妙想返回 JSON 中提取最新值"""
+    try:
+        tables = data["data"]["data"]["searchDataResultDTO"]["dataTableDTOList"]
+        for table in tables:
+            name_map = table.get("nameMap", {})
+            raw_table = table.get("rawTable", {})
+            for key, name in name_map.items():
+                if indicator_name in name:
+                    values = raw_table.get(key, [])
+                    if values:
+                        val = values[-1]
+                        try:
+                            return float(val)
+                        except:
+                            return val
+        return None
+    except:
+        return None
+
+def rule_based_rating(pe, pb, roe):
+    """基于财务数据的规则评级"""
+    if isinstance(pe, (int, float)) and pe < 0:
+        return "D", 35, "公司处于亏损状态; 市盈率为负，估值失效"
+    score = 50
+    if isinstance(roe, (int, float)):
+        if roe > 20: score += 20
+        elif roe > 15: score += 15
+        elif roe > 10: score += 10
+        elif roe > 5: score += 5
+        else: score -= 10
+    if isinstance(pe, (int, float)):
+        if 0 < pe <= 15: score += 15
+        elif pe <= 25: score += 10
+        elif pe <= 40: score += 5
+        else: score -= 5
+    if isinstance(pb, (int, float)):
+        if pb <= 1.5: score += 10
+        elif pb <= 3: score += 5
+        elif pb > 6: score -= 10
+    score = max(10, min(100, score))
+    if score >= 80: rating = "A"
+    elif score >= 65: rating = "B+"
+    elif score >= 50: rating = "B"
+    elif score >= 40: rating = "C"
+    else: rating = "D"
+    risks = []
+    if isinstance(pe, (int, float)) and pe > 40: risks.append("市盈率偏高")
+    if isinstance(pb, (int, float)) and pb > 5: risks.append("市净率较高")
+    if isinstance(roe, (int, float)) and roe < 10: risks.append("净资产收益率偏低")
+    risk_str = "; ".join(risks) if risks else "财务指标正常范围内"
+    return rating, score, risk_str
+
+def send_feishu(ratings):
+    """推送飞书消息"""
+    if not FEISHU_WEBHOOK_URL:
+        return
+    today_str = datetime.now().strftime("%Y-%m-%d")
+    lines = [f"📈 每日抄底 AI评级 ({today_str})"]
+    for r in ratings:
+        line = f"{r['code']} | {r.get('name','')} | 综合评级{r['rating']} | PE {r['pe']}，PB {r['pb']}，ROE {r['roe']} | 风险: {r['risk']}"
+        lines.append(line)
+    payload = {"msg_type": "text", "content": {"text": "\n".join(lines)}}
+    req = urllib.request.Request(FEISHU_WEBHOOK_URL, data=json.dumps(payload).encode(),
+                                 headers={"Content-Type": "application/json"})
+    try:
+        urllib.request.urlopen(req)
+    except Exception as e:
+        print(f"飞书推送失败: {e}")
+
+# ========== 选股与卖出逻辑（保持不变） ==========
 def analyze_left_buy(stock_info, client):
     symbol = stock_info['code']
     try:
@@ -207,7 +301,7 @@ body{{background:#f8f9fa;padding:20px;}}
 .positive{{color:#dc3545;}}
 .negative{{color:#198754;}}
 .rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
-.rating-B\+{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
+.rating-B\\+{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
 .rating-B{{background-color:#0d6efd;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
 .rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;}}
 .rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}
@@ -249,7 +343,6 @@ body{{background:#f8f9fa;padding:20px;}}
         score = r.get('score', '-')
         summary = r.get('summary', '-')
         risk = r.get('risk', '-')
-        # 生成 CSS 类名，B+ 等特殊字符会在 HTML 中自动变为 class="rating-B+"
         rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
         html += f"""<tr>
 <td>{code}</td><td>{s.get('name','')}</td><td>{s.get('price',0):.2f}</td>
@@ -412,6 +505,45 @@ if __name__ == '__main__':
         with open(DAILY_CANDIDATES_FILE, 'w', encoding='utf-8') as f:
             json.dump({'date': today, 'left': top5}, f, ensure_ascii=False, indent=4)
         print(f"保存{len(top5)}只候选")
+
+        # ========== 新增：对候选股票进行妙想评级 ==========
+        print("正在进行 AI 评级...")
+        today_str = today
+        new_ratings = []
+        for stock in top5:
+            code = stock['code']
+            name = stock['name']
+            raw = query_mx_data(code, name)
+            if raw:
+                pe = extract_latest(raw, "市盈率PE")
+                pb = extract_latest(raw, "市净率PB")
+                roe = extract_latest(raw, "净资产收益率ROE")
+                rating, score, risk_str = rule_based_rating(pe, pb, roe)
+                summary = f"{name} PE {pe if isinstance(pe, float) else 'N/A'}，PB {pb if isinstance(pb, float) else 'N/A'}，ROE {roe if isinstance(roe, float) else 'N/A'}%，综合评级{rating}"
+                new_ratings.append({
+                    "code": code, "date": today_str, "rating": rating, "score": score,
+                    "summary": summary, "risk": risk_str,
+                    "pe": f"{pe:.2f}" if isinstance(pe, float) else "N/A",
+                    "pb": f"{pb:.2f}" if isinstance(pb, float) else "N/A",
+                    "roe": f"{roe:.2f}%" if isinstance(roe, float) else "N/A"
+                })
+            else:
+                new_ratings.append({
+                    "code": code, "date": today_str, "rating": "C", "score": 50,
+                    "summary": "财务数据获取失败", "risk": "数据源暂时不可用",
+                    "pe": "N/A", "pb": "N/A", "roe": "N/A"
+                })
+        # 合并到现有 ratings.json
+        all_ratings = load_ratings()
+        existing_keys = {f"{r['code']}_{r['date']}" for r in all_ratings['ratings']}
+        for r in new_ratings:
+            if f"{r['code']}_{r['date']}" not in existing_keys:
+                all_ratings['ratings'].append(r)
+                existing_keys.add(f"{r['code']}_{r['date']}")
+        save_ratings(all_ratings)
+        print("AI 评级完成")
+        # 飞书推送（如果配置了 Webhook）
+        send_feishu(new_ratings)
 
     elif mode == 'history':
         history = load_history(LEFT_HISTORY_FILE)
