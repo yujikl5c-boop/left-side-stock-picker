@@ -41,7 +41,9 @@ jobs:
           fi
           echo "运行模式: $MODE"
           python -u main.py $MODE
-
+        env:
+          MX_APIKEY: ${{ secrets.MX_APIKEY }}
+          FEISHU_WEBHOOK_URL: ${{ secrets.FEISHU_WEBHOOK_URL }}
       - name: 5. 提交结果到仓库
         run: |
           git config user.name "github-actions[bot]"
