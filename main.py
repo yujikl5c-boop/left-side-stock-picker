@@ -519,7 +519,10 @@ if __name__ == '__main__':
                 pb = extract_latest(raw, "市净率PB")
                 roe = extract_latest(raw, "净资产收益率ROE")
                 rating, score, risk_str = rule_based_rating(pe, pb, roe)
-                summary = f"{name} PE {pe if isinstance(pe, float) else 'N/A'}，PB {pb if isinstance(pb, float) else 'N/A'}，ROE {roe if isinstance(roe, float) else 'N/A'}%，综合评级{rating}"
+                pe_str = f"{pe:.2f}" if isinstance(pe, float) else "N/A"
+                pb_str = f"{pb:.2f}" if isinstance(pb, float) else "N/A"
+                roe_str = f"{roe:.2f}%" if isinstance(roe, float) else "N/A"
+                summary = f"PE {pe_str}，PB {pb_str}，ROE {roe_str}"
                 new_ratings.append({
                     "code": code, "date": today_str, "rating": rating, "score": score,
                     "summary": summary, "risk": risk_str,
