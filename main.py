@@ -85,7 +85,7 @@ def extract_latest(data, indicator_name):
 
 def rule_based_rating(pe, pb, roe):
     if isinstance(pe, (int, float)) and pe < 0:
-        return "D", 35, "公司亏损，市盈率为负"
+        return "D", 35, "公司处于亏损状态; 市盈率为负，估值失效"
     score = 50
     if isinstance(roe, (int, float)):
         if roe > 20: score += 20
@@ -112,7 +112,8 @@ def rule_based_rating(pe, pb, roe):
     if isinstance(pe, (int, float)) and pe > 40: risks.append("市盈率偏高")
     if isinstance(pb, (int, float)) and pb > 5: risks.append("市净率较高")
     if isinstance(roe, (int, float)) and roe < 10: risks.append("净资产收益率偏低")
-    return rating, score, "; ".join(risks) if risks else "财务指标正常范围内"
+    risk_str = "; ".join(risks) if risks else "财务指标正常范围内"
+    return rating, score, risk_str
 
 def send_feishu(ratings):
     if not FEISHU_WEBHOOK_URL: return
@@ -193,6 +194,13 @@ def update_history_with_sell(history, client, today_date):
             rec['sell_date'], rec['sell_reason'], rec['sell_price'] = today_date, f"S_落袋 (触碰上轨 {upper:.2f})", price
     return updated
 
+def generate_stock_link(code):
+    """根据股票代码生成东方财富个股链接"""
+    if code.startswith(('6', '9')):
+        return f"https://quote.eastmoney.com/sh{code}.html"
+    else:
+        return f"https://quote.eastmoney.com/sz{code}.html"
+
 def generate_dashboard(today_date, now_time):
     daily = load_json(DAILY_CANDIDATES_FILE) if os.path.exists(DAILY_CANDIDATES_FILE) and os.path.getsize(DAILY_CANDIDATES_FILE)>0 else {'left': []}
     history = load_json(LEFT_HISTORY_FILE)
@@ -200,37 +208,42 @@ def generate_dashboard(today_date, now_time):
     rating_map = {f"{r.get('code','')}_{r.get('date','')}": r for r in ratings_data.get('ratings', [])}
     history_sorted = sorted(history, key=lambda x: x.get('buy_date',''), reverse=True)
 
-    html = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>左侧抄底看板</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><style>body{{background:#f8f9fa;padding:20px;}}.positive{{color:#dc3545;}}.negative{{color:#198754;}}.rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-B\\+{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-B{{background-color:#0d6efd;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-unknown{{background-color:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}[title]{{cursor:help;position:relative;}}[title]:hover::after{{content:attr(title);position:absolute;left:50%;bottom:calc(100%+6px);transform:translateX(-50%);background:#333;color:#fff;padding:4px 8px;border-radius:4px;white-space:pre-wrap;max-width:300px;font-size:0.85rem;z-index:999;pointer-events:none;}}</style></head><body><h2>左侧抄底系统 <small>{now_time}</small></h2><div class="alert alert-info">参数: 下轨{P2}%, 上轨{P1}%, 乖离率&lt;-{BIAS_THRESH}%</div><div class="card mb-4"><div class="card-header bg-primary text-white">今日抄底候选</div><div class="card-body"><table class="table"><thead><tr><th>代码</th><th>名称</th><th>最新价</th><th>乖离率%</th><th>当日最低价</th><th>每股收益</th><th>AI评级</th><th>风险</th><th>摘要</th><th>风险提示</th></tr></thead><tbody>"""
+    html = f"""<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>左侧抄底看板</title><link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><style>body{{background:#f8f9fa;padding:20px;}}.positive{{color:#dc3545;}}.negative{{color:#198754;}}.rating-A{{background-color:#28a745;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-B\\+{{background-color:#17a2b8;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-B{{background-color:#0d6efd;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-C{{background-color:#ffc107;color:black;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-D{{background-color:#dc3545;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}.rating-unknown{{background-color:#6c757d;color:white;padding:2px 8px;border-radius:4px;font-weight:bold;}}[title]{{cursor:help;position:relative;}}[title]:hover::after{{content:attr(title);position:absolute;left:50%;bottom:calc(100%+6px);transform:translateX(-50%);background:#333;color:#fff;padding:4px 8px;border-radius:4px;white-space:pre-wrap;max-width:300px;font-size:0.85rem;z-index:999;pointer-events:none;}}a.risk-link{{color:inherit;text-decoration:none;}}a.risk-link:hover{{text-decoration:underline;}}</style></head><body><h2>左侧抄底系统 <small>{now_time}</small></h2><div class="alert alert-info">参数: 下轨{P2}%, 上轨{P1}%, 乖离率&lt;-{BIAS_THRESH}%</div><div class="card mb-4"><div class="card-header bg-primary text-white">今日抄底候选</div><div class="card-body"><table class="table"><thead><tr><th>代码</th><th>名称</th><th>最新价</th><th>乖离率%</th><th>当日最低价</th><th>每股收益</th><th>AI评级</th><th>摘要</th><th>风险评估</th></tr></thead><tbody>"""
     for s in daily.get('left', []):
         code = s.get('code',''); key = f"{code}_{today_date}"; r = rating_map.get(key, {})
         rating = r.get('rating','-'); score = r.get('score','-')
-        if isinstance(score, int):
-            if score <= 35: risk_display = f"💣 {score}"
-            elif score <= 50: risk_display = f"⚠️ {score}"
-            else: risk_display = f"🟢 {score}"
-        else: risk_display = score
-        summary = r.get('summary','-'); risk = r.get('risk','-')
+        summary = r.get('summary','-'); risk_text = r.get('risk','-')
         rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
-        html += f"<tr><td>{code}</td><td>{s.get('name','')}</td><td>{s.get('price',0):.2f}</td><td>{s.get('bias_val',0):.2f}</td><td>{s.get('low',0):.2f}</td><td>{s.get('eps',0):.3f}</td><td><span class=\"{rating_class}\">{rating}</span></td><td>{risk_display}</td><td>{summary}</td><td>{risk}</td></tr>"
-    if not daily.get('left'): html += "<tr><td colspan='10'>暂无抄底信号</td></tr>"
-    html += "</tbody></table></div></div><div class=\"card\"><div class=\"card-header bg-secondary text-white\">历史追溯池</div><div class=\"card-body\"><table class=\"table\"><thead><tr><th>买入日期</th><th>代码</th><th>名称</th><th>买入价</th><th>生命线</th><th>最新价</th><th>涨跌%</th><th>每股收益</th><th>AI评级</th><th>风险</th><th>状态</th><th>卖出原因</th></tr></thead><tbody>"
+
+        # 风险评估列：如果有实质风险文本则生成链接，否则纯文本
+        risk_display = ""
+        if risk_text and risk_text not in ("-", "财务数据获取失败", "数据源暂时不可用"):
+            link = generate_stock_link(code)
+            risk_display = f'<a href="{link}" target="_blank" class="risk-link" title="点击查看个股详情">{risk_text}</a>'
+        else:
+            risk_display = risk_text if risk_text else "-"
+
+        html += f"<tr><td>{code}</td><td>{s.get('name','')}</td><td>{s.get('price',0):.2f}</td><td>{s.get('bias_val',0):.2f}</td><td>{s.get('low',0):.2f}</td><td>{s.get('eps',0):.3f}</td><td><span class=\"{rating_class}\">{rating}</span></td><td>{summary}</td><td>{risk_display}</td></tr>"
+    if not daily.get('left'): html += "<tr><td colspan='9'>暂无抄底信号</td></tr>"
+    html += "</tbody></table></div></div><div class=\"card\"><div class=\"card-header bg-secondary text-white\">历史追溯池</div><div class=\"card-body\"><table class=\"table\"><thead><tr><th>买入日期</th><th>代码</th><th>名称</th><th>买入价</th><th>生命线</th><th>最新价</th><th>涨跌%</th><th>每股收益</th><th>AI评级</th><th>状态</th><th>卖出原因</th></tr></thead><tbody>"
     for rec in history_sorted:
         code = rec.get('code',''); buy_date = rec.get('buy_date',''); key = f"{code}_{buy_date}"; r = rating_map.get(key, {})
         rating = r.get('rating','-'); score = r.get('score','-')
-        if isinstance(score, int):
-            if score <= 35: risk_display = f"💣 {score}"
-            elif score <= 50: risk_display = f"⚠️ {score}"
-            else: risk_display = f"🟢 {score}"
-        else: risk_display = score
-        summary = r.get('summary',''); risk = r.get('risk','')
-        tooltip = "暂无信息" if rating == '-' else (("\n".join(filter(None, [f"📊 {summary}" if summary else None, f"⚠️ {risk}" if risk else None]))) or "")
+        summary = r.get('summary',''); risk_text = r.get('risk','')
+        if rating == '-' or not r:
+            tooltip = "暂无信息"
+        else:
+            parts = []
+            if summary: parts.append(f"📊 {summary}")
+            if risk_text: parts.append(f"⚠️ {risk_text}")
+            tooltip = "\n".join(parts) if parts else ""
         rating_class = f"rating-{rating}" if rating in ['A','B+','B','C','D'] else "rating-unknown"
         buy_price = rec.get('buy_price',0); latest_price = rec.get('latest_price', buy_price)
         pct = (latest_price/buy_price-1)*100 if buy_price else 0
         color = 'positive' if pct>0 else 'negative' if pct<0 else ''
         status = f"已卖出({rec['sell_date']})" if rec.get('sell_date') else "持有中"
         reason = rec.get('sell_reason','-')
-        html += f"<tr><td>{buy_date}</td><td>{code}</td><td>{rec.get('name','')}</td><td>{buy_price:.2f}</td><td>{rec.get('buy_day_low', buy_price):.2f}</td><td>{latest_price:.2f}</td><td class='{color}'>{pct:+.2f}%</td><td>{rec.get('eps',0):.3f}</td><td><span class=\"{rating_class}\" title=\"{tooltip}\">{rating}</span></td><td>{risk_display}</td><td>{status}</td><td>{reason}</td></tr>"
+        html += f"<tr><td>{buy_date}</td><td>{code}</td><td>{rec.get('name','')}</td><td>{buy_price:.2f}</td><td>{rec.get('buy_day_low', buy_price):.2f}</td><td>{latest_price:.2f}</td><td class='{color}'>{pct:+.2f}%</td><td>{rec.get('eps',0):.3f}</td><td><span class=\"{rating_class}\" title=\"{tooltip}\">{rating}</span></td><td>{status}</td><td>{reason}</td></tr>"
     html += "</tbody></table></div></div></body></html>"
     with open(HTML_OUTPUT, 'w', encoding='utf-8') as f: f.write(html)
     print("看板已生成")
