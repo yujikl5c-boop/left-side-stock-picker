@@ -18,7 +18,7 @@
         "buy_price": 71.3,
         "buy_date": "2026-04-20",
         "buy_day_low": 69.51,
-        "latest_price": 68.0,
+        "latest_price": 68.04,
         "eps": 3.173,
         "latest_update": "2026-05-08"
     },
@@ -28,7 +28,7 @@
         "buy_price": 14.45,
         "buy_date": "2026-04-22",
         "buy_day_low": 13.88,
-        "latest_price": 18.87,
+        "latest_price": 18.85,
         "eps": 0.023,
         "latest_update": "2026-05-08"
     },
@@ -155,7 +155,7 @@
         "buy_price": 47.0,
         "buy_date": "2026-04-27",
         "buy_day_low": 44.22,
-        "latest_price": 47.07,
+        "latest_price": 47.17,
         "eps": 3.278,
         "latest_update": "2026-05-08"
     },
@@ -201,7 +201,7 @@
         "buy_price": 28.8,
         "buy_date": "2026-04-28",
         "buy_day_low": 28.33,
-        "latest_price": 30.71,
+        "latest_price": 30.81,
         "eps": 2.179,
         "latest_update": "2026-05-08"
     },
@@ -211,7 +211,7 @@
         "buy_price": 85.85,
         "buy_date": "2026-04-28",
         "buy_day_low": 83.58,
-        "latest_price": 98.47,
+        "latest_price": 98.18,
         "eps": 0.154,
         "latest_update": "2026-05-08"
     },
@@ -221,7 +221,7 @@
         "buy_price": 21.55,
         "buy_date": "2026-04-28",
         "buy_day_low": 20.02,
-        "latest_price": 22.38,
+        "latest_price": 22.44,
         "eps": 0.555,
         "latest_update": "2026-05-08"
     },
@@ -244,7 +244,7 @@
         "buy_price": 62.99,
         "buy_date": "2026-04-29",
         "buy_day_low": 60.21,
-        "latest_price": 67.87,
+        "latest_price": 67.83,
         "eps": 0.067,
         "latest_update": "2026-05-08"
     },
@@ -254,7 +254,7 @@
         "buy_price": 91.07,
         "buy_date": "2026-04-29",
         "buy_day_low": 86.13,
-        "latest_price": 93.3,
+        "latest_price": 93.88,
         "eps": 0.776,
         "latest_update": "2026-05-08"
     },
@@ -264,7 +264,7 @@
         "buy_price": 5.41,
         "buy_date": "2026-04-29",
         "buy_day_low": 5.2,
-        "latest_price": 5.58,
+        "latest_price": 5.54,
         "eps": 0.096,
         "latest_update": "2026-05-08"
     },
@@ -287,7 +287,7 @@
         "buy_price": 64.72,
         "buy_date": "2026-04-30",
         "buy_day_low": 61.78,
-        "latest_price": 67.87,
+        "latest_price": 67.83,
         "eps": 0.067,
         "latest_update": "2026-05-08"
     },
@@ -297,7 +297,7 @@
         "buy_price": 93.24,
         "buy_date": "2026-04-30",
         "buy_day_low": 90.58,
-        "latest_price": 93.32,
+        "latest_price": 93.88,
         "eps": 0.776,
         "latest_update": "2026-05-08"
     },
@@ -367,7 +367,7 @@
         "buy_price": 5.48,
         "buy_date": "2026-05-06",
         "buy_day_low": 5.31,
-        "latest_price": 5.58,
+        "latest_price": 5.55,
         "eps": 0.096,
         "latest_update": "2026-05-08"
     },
@@ -400,7 +400,7 @@
         "buy_price": 5.51,
         "buy_date": "2026-05-07",
         "buy_day_low": 5.43,
-        "latest_price": 5.57,
+        "latest_price": 5.55,
         "eps": 0.096,
         "latest_update": "2026-05-08"
     },
