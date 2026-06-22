@@ -18,9 +18,9 @@
         "buy_price": 71.3,
         "buy_date": "2026-04-20",
         "buy_day_low": 69.51,
-        "latest_price": 54.03,
+        "latest_price": 56.64,
         "eps": 3.173,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "000818",
@@ -28,9 +28,9 @@
         "buy_price": 14.45,
         "buy_date": "2026-04-22",
         "buy_day_low": 13.88,
-        "latest_price": 12.35,
+        "latest_price": 12.57,
         "eps": 0.023,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "603568",
@@ -155,9 +155,9 @@
         "buy_price": 47.0,
         "buy_date": "2026-04-27",
         "buy_day_low": 44.22,
-        "latest_price": 33.6,
+        "latest_price": 33.67,
         "eps": 3.278,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600745",
@@ -178,9 +178,9 @@
         "buy_price": 20.64,
         "buy_date": "2026-04-28",
         "buy_day_low": 19.23,
-        "latest_price": 16.52,
+        "latest_price": 16.14,
         "eps": 0.257,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "002624",
@@ -201,9 +201,9 @@
         "buy_price": 28.8,
         "buy_date": "2026-04-28",
         "buy_day_low": 28.33,
-        "latest_price": 23.89,
+        "latest_price": 23.46,
         "eps": 2.179,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300763",
@@ -211,9 +211,9 @@
         "buy_price": 85.85,
         "buy_date": "2026-04-28",
         "buy_day_low": 83.58,
-        "latest_price": 92.0,
+        "latest_price": 94.98,
         "eps": 0.154,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600346",
@@ -221,9 +221,9 @@
         "buy_price": 21.55,
         "buy_date": "2026-04-28",
         "buy_day_low": 20.02,
-        "latest_price": 17.17,
+        "latest_price": 18.5,
         "eps": 0.555,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "002624",
@@ -244,9 +244,9 @@
         "buy_price": 62.99,
         "buy_date": "2026-04-29",
         "buy_day_low": 60.21,
-        "latest_price": 60.2,
+        "latest_price": 59.38,
         "eps": 0.067,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300724",
@@ -254,9 +254,9 @@
         "buy_price": 91.07,
         "buy_date": "2026-04-29",
         "buy_day_low": 86.13,
-        "latest_price": 72.93,
+        "latest_price": 72.88,
         "eps": 0.776,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600219",
@@ -264,9 +264,9 @@
         "buy_price": 5.41,
         "buy_date": "2026-04-29",
         "buy_day_low": 5.2,
-        "latest_price": 4.52,
+        "latest_price": 4.73,
         "eps": 0.096,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "002891",
@@ -287,9 +287,9 @@
         "buy_price": 64.72,
         "buy_date": "2026-04-30",
         "buy_day_low": 61.78,
-        "latest_price": 60.2,
+        "latest_price": 59.38,
         "eps": 0.067,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300724",
@@ -310,9 +310,9 @@
         "buy_price": 24.58,
         "buy_date": "2026-04-30",
         "buy_day_low": 24.25,
-        "latest_price": 19.73,
+        "latest_price": 19.69,
         "eps": -0.069,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "603568",
@@ -346,9 +346,9 @@
         "buy_price": 6.81,
         "buy_date": "2026-05-06",
         "buy_day_low": 6.54,
-        "latest_price": 5.32,
+        "latest_price": 5.34,
         "eps": 0.005,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600864",
@@ -629,9 +629,9 @@
         "buy_price": 5.17,
         "buy_date": "2026-05-18",
         "buy_day_low": 5.04,
-        "latest_price": 4.52,
+        "latest_price": 4.73,
         "eps": 0.096,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300068",
@@ -769,9 +769,9 @@
         "buy_price": 16.78,
         "buy_date": "2026-05-21",
         "buy_day_low": 15.2,
-        "latest_price": 16.87,
+        "latest_price": 16.38,
         "eps": -0.152,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "002294",
@@ -792,9 +792,9 @@
         "buy_price": 33.06,
         "buy_date": "2026-05-21",
         "buy_day_low": 30.47,
-        "latest_price": 28.57,
+        "latest_price": 27.49,
         "eps": 0.299,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300347",
@@ -828,9 +828,9 @@
         "buy_price": 16.45,
         "buy_date": "2026-05-22",
         "buy_day_low": 16.0,
-        "latest_price": 16.87,
+        "latest_price": 16.38,
         "eps": -0.152,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600208",
@@ -890,9 +890,9 @@
         "buy_price": 17.01,
         "buy_date": "2026-05-25",
         "buy_day_low": 16.33,
-        "latest_price": 16.87,
+        "latest_price": 16.38,
         "eps": -0.152,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "000034",
@@ -952,9 +952,9 @@
         "buy_price": 17.86,
         "buy_date": "2026-05-26",
         "buy_day_low": 16.55,
-        "latest_price": 16.87,
+        "latest_price": 16.38,
         "eps": -0.152,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600426",
@@ -1027,9 +1027,9 @@
         "buy_price": 18.75,
         "buy_date": "2026-05-27",
         "buy_day_low": 17.67,
-        "latest_price": 16.87,
+        "latest_price": 16.38,
         "eps": -0.152,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300015",
@@ -1310,9 +1310,9 @@
         "buy_price": 19.36,
         "buy_date": "2026-06-02",
         "buy_day_low": 18.1,
-        "latest_price": 20.69,
+        "latest_price": 20.12,
         "eps": 0.009,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688506",
@@ -1320,9 +1320,9 @@
         "buy_price": 211.28,
         "buy_date": "2026-06-02",
         "buy_day_low": 200.1,
-        "latest_price": 230.56,
+        "latest_price": 228.99,
         "eps": -1.876,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "605117",
@@ -1460,9 +1460,9 @@
         "buy_price": 14.99,
         "buy_date": "2026-06-05",
         "buy_day_low": 14.18,
-        "latest_price": 16.52,
+        "latest_price": 16.15,
         "eps": 0.214,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "002176",
@@ -1522,9 +1522,12 @@
         "buy_price": 268.27,
         "buy_date": "2026-06-08",
         "buy_day_low": 261.6,
-        "latest_price": 361.82,
+        "latest_price": 376.81,
         "eps": 0.993,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22",
+        "sell_date": "2026-06-22",
+        "sell_reason": "S_落袋 (触碰上轨 371.53)",
+        "sell_price": 376.81
     },
     {
         "code": "002837",
@@ -1532,9 +1535,9 @@
         "buy_price": 64.2,
         "buy_date": "2026-06-08",
         "buy_day_low": 62.2,
-        "latest_price": 74.4,
+        "latest_price": 77.34,
         "eps": 0.007,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600418",
@@ -1555,9 +1558,9 @@
         "buy_price": 214.05,
         "buy_date": "2026-06-08",
         "buy_day_low": 208.0,
-        "latest_price": 276.3,
+        "latest_price": 285.19,
         "eps": -0.648,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688099",
@@ -1578,9 +1581,12 @@
         "buy_price": 283.6,
         "buy_date": "2026-06-09",
         "buy_day_low": 270.6,
-        "latest_price": 361.82,
+        "latest_price": 376.96,
         "eps": 0.993,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22",
+        "sell_date": "2026-06-22",
+        "sell_reason": "S_落袋 (触碰上轨 371.53)",
+        "sell_price": 376.96
     },
     {
         "code": "000034",
@@ -1601,9 +1607,9 @@
         "buy_price": 2.82,
         "buy_date": "2026-06-09",
         "buy_day_low": 2.75,
-        "latest_price": 3.1,
+        "latest_price": 3.16,
         "eps": 0.037,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688472",
@@ -1611,9 +1617,9 @@
         "buy_price": 11.22,
         "buy_date": "2026-06-09",
         "buy_day_low": 10.82,
-        "latest_price": 11.21,
+        "latest_price": 11.51,
         "eps": 0.143,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688223",
@@ -1621,9 +1627,9 @@
         "buy_price": 5.18,
         "buy_date": "2026-06-09",
         "buy_day_low": 4.98,
-        "latest_price": 5.09,
+        "latest_price": 5.13,
         "eps": -0.131,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300573",
@@ -1631,9 +1637,9 @@
         "buy_price": 35.98,
         "buy_date": "2026-06-10",
         "buy_day_low": 35.1,
-        "latest_price": 36.47,
+        "latest_price": 36.78,
         "eps": 0.578,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600988",
@@ -1641,9 +1647,9 @@
         "buy_price": 28.27,
         "buy_date": "2026-06-10",
         "buy_day_low": 27.71,
-        "latest_price": 30.69,
+        "latest_price": 31.0,
         "eps": 0.52,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688599",
@@ -1651,9 +1657,9 @@
         "buy_price": 13.39,
         "buy_date": "2026-06-10",
         "buy_day_low": 13.15,
-        "latest_price": 14.54,
+        "latest_price": 14.56,
         "eps": -0.121,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "002572",
@@ -1674,9 +1680,9 @@
         "buy_price": 29.51,
         "buy_date": "2026-06-10",
         "buy_day_low": 28.39,
-        "latest_price": 30.13,
+        "latest_price": 29.95,
         "eps": -0.02,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300573",
@@ -1684,9 +1690,9 @@
         "buy_price": 36.29,
         "buy_date": "2026-06-11",
         "buy_day_low": 35.57,
-        "latest_price": 36.47,
+        "latest_price": 36.78,
         "eps": 0.578,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "603606",
@@ -1694,9 +1700,9 @@
         "buy_price": 40.29,
         "buy_date": "2026-06-11",
         "buy_day_low": 37.75,
-        "latest_price": 39.9,
+        "latest_price": 40.28,
         "eps": 0.45,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688166",
@@ -1730,9 +1736,9 @@
         "buy_price": 29.36,
         "buy_date": "2026-06-11",
         "buy_day_low": 28.58,
-        "latest_price": 30.13,
+        "latest_price": 29.95,
         "eps": -0.02,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688063",
@@ -1740,9 +1746,9 @@
         "buy_price": 55.17,
         "buy_date": "2026-06-12",
         "buy_day_low": 53.92,
-        "latest_price": 59.1,
+        "latest_price": 59.99,
         "eps": 0.091,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300573",
@@ -1750,9 +1756,9 @@
         "buy_price": 37.48,
         "buy_date": "2026-06-12",
         "buy_day_low": 36.2,
-        "latest_price": 36.48,
+        "latest_price": 36.78,
         "eps": 0.578,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "301358",
@@ -1760,9 +1766,9 @@
         "buy_price": 72.6,
         "buy_date": "2026-06-12",
         "buy_day_low": 68.6,
-        "latest_price": 76.28,
+        "latest_price": 85.2,
         "eps": 1.608,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "000400",
@@ -1770,9 +1776,9 @@
         "buy_price": 22.18,
         "buy_date": "2026-06-12",
         "buy_day_low": 21.63,
-        "latest_price": 22.81,
+        "latest_price": 23.45,
         "eps": 0.109,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "603606",
@@ -1780,9 +1786,9 @@
         "buy_price": 41.41,
         "buy_date": "2026-06-12",
         "buy_day_low": 39.46,
-        "latest_price": 39.91,
+        "latest_price": 40.28,
         "eps": 0.45,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300394",
@@ -1790,9 +1796,9 @@
         "buy_price": 301.56,
         "buy_date": "2026-06-15",
         "buy_day_low": 277.18,
-        "latest_price": 335.0,
+        "latest_price": 325.22,
         "eps": 0.451,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688120",
@@ -1800,9 +1806,9 @@
         "buy_price": 196.85,
         "buy_date": "2026-06-15",
         "buy_day_low": 183.0,
-        "latest_price": 226.36,
+        "latest_price": 233.37,
         "eps": 0.5,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300502",
@@ -1810,9 +1816,9 @@
         "buy_price": 536.47,
         "buy_date": "2026-06-15",
         "buy_day_low": 490.13,
-        "latest_price": 581.07,
+        "latest_price": 580.07,
         "eps": 1.994,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "601615",
@@ -1820,9 +1826,9 @@
         "buy_price": 12.31,
         "buy_date": "2026-06-15",
         "buy_day_low": 12.01,
-        "latest_price": 12.21,
+        "latest_price": 12.53,
         "eps": 0.011,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "002837",
@@ -1830,9 +1836,9 @@
         "buy_price": 70.29,
         "buy_date": "2026-06-15",
         "buy_day_low": 66.27,
-        "latest_price": 74.38,
+        "latest_price": 77.33,
         "eps": 0.007,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300394",
@@ -1840,9 +1846,9 @@
         "buy_price": 324.56,
         "buy_date": "2026-06-16",
         "buy_day_low": 306.01,
-        "latest_price": 335.0,
+        "latest_price": 325.22,
         "eps": 0.451,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688120",
@@ -1850,9 +1856,9 @@
         "buy_price": 202.24,
         "buy_date": "2026-06-16",
         "buy_day_low": 193.88,
-        "latest_price": 226.51,
+        "latest_price": 233.37,
         "eps": 0.5,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300502",
@@ -1860,9 +1866,9 @@
         "buy_price": 551.14,
         "buy_date": "2026-06-16",
         "buy_day_low": 535.01,
-        "latest_price": 581.07,
+        "latest_price": 580.07,
         "eps": 1.994,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "601615",
@@ -1883,9 +1889,9 @@
         "buy_price": 28.94,
         "buy_date": "2026-06-16",
         "buy_day_low": 28.0,
-        "latest_price": 28.61,
+        "latest_price": 28.58,
         "eps": -0.034,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "603296",
@@ -1893,9 +1899,9 @@
         "buy_price": 79.02,
         "buy_date": "2026-06-17",
         "buy_day_low": 74.28,
-        "latest_price": 80.54,
+        "latest_price": 78.9,
         "eps": 0.7,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300394",
@@ -1903,9 +1909,9 @@
         "buy_price": 324.9,
         "buy_date": "2026-06-17",
         "buy_day_low": 315.0,
-        "latest_price": 335.0,
+        "latest_price": 325.22,
         "eps": 0.451,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "300502",
@@ -1913,9 +1919,9 @@
         "buy_price": 546.67,
         "buy_date": "2026-06-17",
         "buy_day_low": 537.11,
-        "latest_price": 581.07,
+        "latest_price": 580.07,
         "eps": 1.994,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "600066",
@@ -1923,9 +1929,9 @@
         "buy_price": 26.99,
         "buy_date": "2026-06-17",
         "buy_day_low": 26.0,
-        "latest_price": 26.05,
+        "latest_price": 27.45,
         "eps": 0.298,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
     },
     {
         "code": "688120",
@@ -1933,8 +1939,61 @@
         "buy_price": 218.26,
         "buy_date": "2026-06-17",
         "buy_day_low": 196.0,
-        "latest_price": 226.51,
+        "latest_price": 232.8,
         "eps": 0.5,
-        "latest_update": "2026-06-18"
+        "latest_update": "2026-06-22"
+    },
+    {
+        "code": "603296",
+        "name": "华勤技术",
+        "buy_price": 81.46,
+        "buy_date": "2026-06-18",
+        "buy_day_low": 78.87,
+        "latest_price": 78.9,
+        "eps": 0.7,
+        "latest_update": "2026-06-22"
+    },
+    {
+        "code": "300394",
+        "name": "天孚通信",
+        "buy_price": 339.08,
+        "buy_date": "2026-06-18",
+        "buy_day_low": 324.0,
+        "latest_price": 325.22,
+        "eps": 0.451,
+        "latest_update": "2026-06-22"
+    },
+    {
+        "code": "300502",
+        "name": "新易盛",
+        "buy_price": 586.0,
+        "buy_date": "2026-06-18",
+        "buy_day_low": 551.18,
+        "latest_price": 580.07,
+        "eps": 1.994,
+        "latest_update": "2026-06-22"
+    },
+    {
+        "code": "002465",
+        "name": "海格通信",
+        "buy_price": 13.71,
+        "buy_date": "2026-06-18",
+        "buy_day_low": 13.37,
+        "latest_price": 13.32,
+        "eps": 0.002,
+        "latest_update": "2026-06-22",
+        "sell_date": "2026-06-22",
+        "sell_reason": "破位止损 (跌破买入日最低价 13.37)",
+        "sell_price": 13.32
+    },
+    {
+        "code": "002920",
+        "name": "德赛西威",
+        "buy_price": 87.64,
+        "buy_date": "2026-06-18",
+        "buy_day_low": 86.38,
+        "latest_price": 86.69,
+        "eps": 0.773,
+        "latest_update": "2026-06-22"
     }
 ]
